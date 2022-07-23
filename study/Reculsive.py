@@ -1,21 +1,15 @@
 import random
 
-
 def sum_list(data):
   sum = 0
   for i in data:
     sum += i
   return sum
 
-
 def reculsive_sum(data):
   if len(data) == 1:
     return data[0]
   return data[0] + reculsive_sum(data[1:])
-
-
-# abcd
-# abcde
 
 # 회문 검사
 def palindrome(str):
