@@ -77,10 +77,11 @@ def kruskal(graph):
 
   # 노드들 연결시켜주기
   edges = sorted(graph["edges"])
-
+  cnt = 0
   for edge in edges:
+    cnt += 1
+    print(cnt)
     weight, vertex_u, vertex_v = edge
-
     if find(vertex_u) != find(vertex_v):
       mst.append(edge)
       union(vertex_u,vertex_v)
