@@ -27,7 +27,7 @@ def back_tracking(N, upper_queen_info, result):
 
   # 재귀 함수 종료조건 작성
   if cur_row == N:
-    result.append(upper_queen_info[:])
+    # result.append(upper_queen_info[:])
     global cnt
     cnt +=1
     return
