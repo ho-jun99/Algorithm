@@ -46,6 +46,38 @@ def solve(n):
       # 출력은 연결된 놈의 root의 weight를 보여줘야함
       print(weight[find(parent,node_a)])
 
+
+def update_networks(networks,network):
+  for item in networks:
+    if item == network :
+      break
+    if not network.isdisjoint(item):
+      # 교집합이 존재한다면
+      network.update(item)
+      networks.remove(item)
+      networks.append(network)
+      update_networks(networks,network)
+
+    else:
+      networks.append(network)
+
+def solve2(n):
+  for _ in range(n):
+    F = int(input())
+    networks = []
+    for _ in range(F):
+      network = set(sys.stdin.readline().strip().split())
+
+      # 맨 처음일때는 그냥 추가
+      if len(networks) == 0 :
+        networks.append(network)
+        print(len(network))
+        continue
+
+      update_networks(networks,network)
+      print(len(networks[-1]))
+    networks.clear()
+
 if __name__ == '__main__':
     n = int(input())
-    solve(n)
+    solve2(n)
