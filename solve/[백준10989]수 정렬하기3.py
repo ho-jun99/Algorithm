@@ -9,7 +9,6 @@
 # 아래 방법은 조금 비효율 적임. 굳이 딕셔너리를 사용하지 않고 배열의 인덱스를 map처럼 사용하면 됨
 import sys
 
-
 def not_solve():
   N = int(input())
   data = dict()

@@ -1,2 +1,2 @@
-for i in range(1,1):
-  print(i)
+mstr = "1" + " " + "1" +"-" + "1"
+print(eval(mstr))
