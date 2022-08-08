@@ -1,6 +1,5 @@
 import sys
 
-
 def z(n,row,col):
   if n == 1:
     if row == 0 and col == 0 :
@@ -29,7 +28,6 @@ def z(n,row,col):
     row -= before_size
     col -= before_size
     # print(f"제 3사분면 {n}, {row}, {col}")
-
   return (count*before_size**2) + z(n-1,row,col)
 
 def solve():

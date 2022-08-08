@@ -1,2 +1,6 @@
-mstr = "1" + " " + "1" +"-" + "1"
-print(eval(mstr))
+a = "abc"
+b = "bcd"
+
+arr = [b,a]
+
+print(sorted(arr))
