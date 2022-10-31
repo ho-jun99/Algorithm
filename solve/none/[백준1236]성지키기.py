@@ -1,6 +1,5 @@
 import sys
 
-
 def solve():
   row,col = map(int,sys.stdin.readline().strip().split())
   castle = []
