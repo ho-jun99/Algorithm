@@ -8,9 +8,6 @@ n,k = map(int,sys.stdin.readline().split())
 # 찾는 값이 나오면 끝내고 그때의 카운트값을 반환
 
 # 시작점 도착점이 시작부터 같을 경우
-if n==k :
-  print(0)
-  exit(0)
 
 que = queue.Queue()
 visit = [False] * 100_001
@@ -19,6 +16,9 @@ weight = [0] * 100_001
 que.put(n)
 while not que.empty() :
   cur = que.get()
+  if cur == k :
+    print(weight[cur])
+    break
 
   for i in range(3) :
     next = 0
@@ -34,7 +34,3 @@ while not que.empty() :
         weight[next] = weight[cur] + 1
         visit[next] = True
         que.put(next)
-
-      if next == k :
-        print(weight[next])
-        exit(0)
