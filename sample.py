@@ -1,9 +1,7 @@
-import sys
+l = ['S',"S",'E',"E"]
+print(l)
 
-d = dict()
-for i in range(35) :
-  number,score = map(float,sys.stdin.readline().split())
-  d[number] = score
-
-for index,item in sorted(d.values(),reverse=True) :
-  print(index, item)
+if l[0] == 'S' : # or l[0] == "S"
+  print(True)
+else :
+  print(False)
