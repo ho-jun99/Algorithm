@@ -1,103 +1,92 @@
-# 크면 못지나감
-# 같으면 지나감
-# 작으면 먹음
-# 거리가 같으면 위쪽 먼저 같으면 왼쪽에 있는 것
-# 현재 자신의 크기만큼의 물고기를 먹으면 커
-
-# 필요한 것
-# 현재 물고기의 위치
-# 크기별 물고기들의 갯수
+'''
+  - BFS 단위를 잘 쪼개자. BFS를 소규모 단위로 쪼개서 끝내버릴 수록 코드짜기가 수월한거 같다.
+  - BFS 에서 상태단위를 관리하기 위해서는, 큐에 담아서 뽑아서 계속 유지하고 업데이트 해야한다.
+  - 이동한 경로를 0으로 표기해주자
+  - 최소값 단위로 뽑아쓴다면 heap을 쓰면 더 빠를거 같다. 물고기 관리하는 fish배열을 heap으로 관리해볼까?
+'''
 import sys
 from collections import deque
 
-time = 0
-n = int(sys.stdin.readline())
-board = []
-fishs = [0] * 7
-shark = [2, 0]
+
+def print2D(arr):
+  for row in range(N):
+    for col in range(N):
+      print(arr[row][col], end=" ")
+    print()
+  print()
 
 
-def callMom():
-  print(time)
-  exit()
-
-
-def isFishsEatChecking():  # 현재 물고기들 현황을 파악해서 먹을 수 있는 피시가 있는지
-  cnt = 0
-  for i in range(1, 7):
-    if fishs[i] > 0:
-      if shark[0] > i:
-        cnt += 1
-  if cnt == 0:
-    return False
-  else:
-    return True
-
-
-cur = (-1, -1)
-for i in range(n):
-  line = list(map(int, sys.stdin.readline().split()))
-  temp = list()
-  for item in line:
-    temp.append([item, 0])
-  board.append(temp)
-  for index, item in enumerate(line):
-    if item == 9:
-      cur = (i, index)
-      continue
-    # print(item)
-    fishs[item] += 1
-
-# print(board)
-
-# bfs로 돌아야함
-# 4방향 탐색, 최단 거리에 있는거 찾기, 물고기 초기 값 2, 그쪽으로 이동 이동할때 i횟수 더해주기
-# 틈틈히 피시 현황 관리하기
+N = int(sys.stdin.readline().strip())  # 공간의 크기
+board = list()
 
 dirs = [
   (-1, 0), (0, -1), (1, 0), (0, 1)
   ]
 
-# 4방향 탐색에 대해서 두번 돌기
+for _ in range(N):
+  line = list(map(int, sys.stdin.readline().split()))
+  board.append(line)
 
-dq = deque()
-dq.append(cur)
-board[cur[0]][cur[1]][0] = 0
-board[cur[0]][cur[1]][1] = 1
-print(board)
-while isFishsEatChecking():
-  cur = dq.popleft()  # 현재 위치
-  # print(f"cur : {cur}")
-  # 4방향 탐색 두번 돌기
+# 물고기통을 기준으로 한다
+# 현재 시작점에서 BFS로 물고기 후보들을 구한다
+# 구한 물고기 후보들에서 가장 거리가 가까운 순에서 맨위 맨 왼쪽에 있는 물고기를 첫번째로 꺼낸다
+# 다시 탐색하고 물고기 후보가 없어지면 탐색을 종료한다.
 
-  isEatFish = False
-  for turn in range(2) :
+start = (-1, -1)
+for row in range(N):
+  for col in range(N):
+    if board[row][col] == 9:
+      start = (0, row, col)  # 거리, 행, 열
+
+fishes = list()
+sstate = (2, 0, 0)  # ( 몸집, 먹은 물고기 수 , 이동한 칸 )
+fishes.append((start, sstate))  # (거리, 행, 열), ( 몸집, 먹은 물고기 수 , 이동한 칸 )
+total = 0
+while len(fishes) != 0:
+  fishes.sort(key=lambda x: (x[0][0], x[0][1], x[0][2]))  # 거리, 위치 순으로 정렬한다
+  time, row, col = fishes[0][0]
+  total += time
+  state = fishes[0][1]
+  fishes.clear()  # 물고기후보군 비우기
+  cur = (row, col)
+  visit = [[False] * N for _ in range(N)]
+  visit[cur[0]][cur[1]] = True  # 방문처리
+  board[cur[0]][cur[1]] = 0  # 시작점 초기화
+
+  dq = deque()
+  dq.append((cur[0], cur[1], 0))  # 행,열, 시작점에서부터 거리
+
+  while len(dq) != 0:
+    pos = dq.popleft()  # 현재 위치부터 BFS로 전역 탐색함
     for dir in dirs:
-      # 첫번째 탐색에서는 4방향에 먹을 수 있는 물고기가 있는지 확인
-      next = (cur[0] + dir[0], cur[1] + dir[1])
-      # print(f" turn : {turn}, next : {next}")
-      if turn == 0 and 0 <= next[0] < n and 0 <= next[1] < n and shark[0] > board[next[0]][next[1]][0]:
-        dq.clear() # 먹으면 큐 비우기
-        dq.append(next)  # 이동하기
-        shark[1] += 1  # 먹기
-        isEatFish = True
-        fishs[board[next[0]][next[1]][0]] -= 1  # 물고기 현황 업데이트
-        board[next[0]][next[1]][0] = 0  # 그자리 0으로 만들기
-        board[next[0]][next[1]][1] +=1  # 시간 업데이트
+      next = (pos[0] + dir[0], pos[1] + dir[1])
+      if 0 <= next[0] < N and 0 <= next[1] < N and not visit[next[0]][next[1]]:  # 범위 안이면서 방문하지 않은 곳이면
 
-        if shark[1] == shark[0]:  # 상어 몸집 키워주기
-          shark[0] += 1
-          shark[1] = 0
-        break
+        if board[next[0]][next[1]] == 0 or board[next[0]][next[1]] == state[0]:  # 그냥 이동이 가능한 곳이면
+          dq.append((next[0], next[1], pos[2] + 1))
+          visit[next[0]][next[1]] = True  # 방문처리
 
-      if turn == 1:
-        if board[next[0]][next[1]][1] == 0 and board[next[0][next[1]]][0] == shark[0] or board[next[0][next[1]]][0] == 0:  # 이동할 수 있는 곳이라면 이동하기
-          dq.append(next) # 이동 하기
-          board[next[0]][next[1]][1] +=1 # 방문 표시 및 프로시져
-          isEatFish = False
-
-    if isEatFish:
-      break
+        elif 0 < board[next[0]][next[1]] < state[0]:  # 먹을 수 있는 후보군 이면
+          level = state[0]
+          eatten = state[1] + 1
+          if level == eatten:
+            level += 1
+            eatten = 0
+          fishes.append(((pos[2] + 1, next[0], next[1]), (level, eatten, 0)))
+          visit[next[0]][next[1]] = True
+print(total)
 
 
-print("end")
+## -- 고민했던 조건 들 -- ##
+# # 종료조건
+# # 상어가 더이상 먹을 물고기가 없으면 종료되어야함
+# # 이걸 탐색으로 스스로 종료되게 할지 ?
+# # 탐색 시작전에 딕셔너리에서 자기 아래것들의 숫자를 돌려서 찾을지 ?
+# # 탐색조건
+# # 거리가 가까운 물고기라면, 가장 위에 있는 그다음으로는 가장 왼쪽에 있는 물고기를 먼저 먹는다.
+# # 가장 가까운 위에서부터 먹고 같으면 왼쪽부터 먹는다는 표현이 이해가 잘 안간다.
+# # BFS로 이동순서를 정의해주는게 아닌가?
+# # 우선순위를 줘야한다.
+#
+# # BFS를 매턴마다 돌리자
+# # 턴은 물고기를 먹을때
